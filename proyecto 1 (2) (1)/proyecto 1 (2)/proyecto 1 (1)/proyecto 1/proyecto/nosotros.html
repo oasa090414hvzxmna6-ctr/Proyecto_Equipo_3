@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dulcería Estrella</title>
+  <link rel="stylesheet" href="nosotros.css">
+</head>
+
+<body>
+
+  <!-- HEADER EXTERNO -->
+  <div id="header-placeholder"></div>
+  <script>
+    fetch("header.html")
+      .then(r => r.text())
+      .then(h => document.getElementById("header-placeholder").innerHTML = h);
+  </script>
+
+  <!-- CONTENIDO FIJO -->
+  <main class="contenedor-central">
+
+    <p class="texto-info">
+  <strong>Dulcería Estrella</strong> es una tienda especializada en confitería y golosinas que combina calidad, variedad y un ambiente mágico para toda la familia.
+  <br><br>
+  Con una decoración vibrante y colorida, nuestro espacio está diseñado para hacer de cada visita una experiencia dulce e inolvidable.
+  <br><br>
+  <strong>Lo que ofrecemos:</strong><br>
+  • Amplia variedad de productos: dulces agranel, golosinas empaquetadas, chocolates y caramelos.<br>
+  • Mesas de dulces para eventos: cumpleaños, baby showers, bodas y más.<br>
+  • Ambiente familiar: un espacio acogedor donde la magia de los dulces cobra vida.
+</p>
+
+
+    <!-- BOTÓN ORIGINAL PARA MOSTRAR/OCULTAR FORMULARIO -->
+    <button id="toggleForm" class="btn-enviar">Formulario de contacto</button>
+
+    <!-- FORMULARIO FLOTANTE -->
+    <section id="contacto" class="contacto">
+      <h2>Contáctanos</h2>
+      <p>¿Tienes alguna duda o comentario? ¡Escríbenos!</p>
+
+      <form action="#" method="post" class="formulario-contacto">
+
+        <div class="campo">
+          <label for="nombre">Nombre:</label>
+          <input type="text" id="nombre" name="nombre" required>
+        </div>
+
+        <div class="campo">
+          <label for="correo">Correo electrónico:</label>
+          <input type="email" id="correo" name="correo" required>
+        </div>
+
+        <div class="campo">
+          <label for="mensaje">Mensaje:</label>
+          <textarea id="mensaje" name="mensaje" rows="5" required></textarea>
+        </div>
+
+        <button type="submit" class="btn-enviar">Enviar mensaje</button>
+      </form>
+    </section>
+
+  </main>
+
+
+  <!-- SCRIPT PARA MOSTRAR/OCULTAR FORMULARIO -->
+  <script>
+    const boton = document.getElementById("toggleForm");
+    const form = document.querySelector(".contacto");
+
+    boton.addEventListener("click", () => {
+      form.classList.toggle("visible");
+    });
+  </script>
+
+  <footer>
+    <p>&copy; 2025 Dulcería Estrella. Todos los derechos reservados.</p>
+  </footer>
+
+</body>
+</html>

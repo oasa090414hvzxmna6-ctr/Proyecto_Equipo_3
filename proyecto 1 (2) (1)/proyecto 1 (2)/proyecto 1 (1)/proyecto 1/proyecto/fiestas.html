@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Productos para Fiestas - Dulcería Estrella</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div id="header-placeholder"></div>
+
+  <main class="contenido">
+    <h2>Productos para Fiestas</h2>
+
+    <div class="productos-contenedor">
+      <!-- PRODUCTO 1 -->
+      <div class="producto">
+        <img src="img/Globios.jpg" alt="Globos decorativos" width="200" height="200">
+        <h3>Globos decorativos</h3>
+        <p>$120.00 MXN</p>
+        <button class="add-to-cart" 
+                data-name="Globos decorativos" 
+                data-price="120" 
+                data-img="img/Globios.jpg">
+          Agregar al carrito
+        </button>
+      </div>
+
+      <!-- PRODUCTO 2 -->
+      <div class="producto">
+        <img src="img/Gorros.jpg" alt="Gorros de fiesta" width="200" height="200">
+        <h3>Gorros de Fiesta</h3>
+        <p>$95.00 MXN</p>
+        <button class="add-to-cart" 
+                data-name="Gorros de Fiesta" 
+                data-price="95" 
+                data-img="img/Gorros.jpg">
+          Agregar al carrito
+        </button>
+      </div>
+
+      <!-- PRODUCTO 3 -->
+      <div class="producto">
+        <img src="img/bd4892f2-e5bf-4cbf-839c-c3d7575db925.jpg" alt="Velas para pastel" width="200" height="200">
+        <h3>Velas para Pastel</h3>
+        <p>$30.00 MXN</p>
+        <button class="add-to-cart" 
+                data-name="Velas para Pastel" 
+                data-price="30" 
+                data-img="img/bd4892f2-e5bf-4cbf-839c-c3d7575db925.jpg">
+          Agregar al carrito
+        </button>
+      </div>
+
+      <!-- PRODUCTO 4 -->
+      <div class="producto">
+        <img src="img/bolsas.jpg" alt="Bolsa para dulces" width="200" height="200">
+        <h3>Bolsa para dulces</h3>
+        <p>$60.00 MXN</p>
+        <button class="add-to-cart" 
+                data-name="Bolsa para dulces" 
+                data-price="60" 
+                data-img="img/bolsas.jpg">
+          Agregar al carrito
+        </button>
+      </div>
+
+      <!-- PRODUCTO 5 -->
+      <div class="producto">
+        <img src="img/Platos.jpg" alt="Platos desechables" width="150" height="150">
+        <h3>Platos Desechables 20 unidades</h3>
+        <p>$55.00 MXN</p>
+        <button class="add-to-cart" 
+                data-name="Platos Desechables 20 unidades" 
+                data-price="55" 
+                data-img="img/Platos.jpg">
+          Agregar al carrito
+        </button>
+      </div>
+
+      <!-- PRODUCTO 6 -->
+      <div class="producto">
+        <img src="img/vasos.jpg" alt="Vasos desechables" width="200" height="200">
+        <h3>Vasos Desechables 30 unidades</h3>
+        <p>$50.00 MXN</p>
+        <button class="add-to-cart" 
+                data-name="Vasos Desechables 30 unidades" 
+                data-price="50" 
+                data-img="img/vasos.jpg">
+          Agregar al carrito
+        </button>
+      </div>
+
+      <!-- PRODUCTO 7 -->
+      <div class="producto">
+        <img src="img/Guirnaldas.jpg" alt="Guirnaldas" width="200" height="200">
+        <h3>Guirlandas Decorativas</h3>
+        <p>$25.00 MXN</p>
+        <button class="add-to-cart" 
+                data-name="Guirlandas Decorativas" 
+                data-price="25" 
+                data-img="img/Guirnaldas.jpg">
+          Agregar al carrito
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <!-- SÓLO ESTOS SCRIPTS - VERSIÓN SIMPLIFICADA -->
+  <script>
+    // 1. Cargar header dinámicamente
+    fetch("header.html")
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById("header-placeholder").innerHTML = data;
+      })
+      .catch(error => console.error("Error cargando header:", error));
+
+    // 2. Cargar footer dinámicamente
+    fetch("footer.html")
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById("footer-placeholder").innerHTML = data;
+      })
+      .catch(error => console.error("Error cargando footer:", error));
+  </script>
+
+  <!-- 3. ¡IMPORTANTE! Cargar el sistema de carrito principal -->
+  <script src="carrito.js"></script>
+
+</body>
+</html>

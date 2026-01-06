@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dulcería Estrella</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="icono ch.png" type="image/jpeg">
+</head>
+<body>
+  <div id="header-placeholder"></div>
+
+<script>
+  fetch("header.html")
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("header-placeholder").innerHTML = data;
+    });
+</script>
+
+  <img src="img/frente-dulceria.jpeg" alt="Entrada de una dulcería" width="200" height="200" loading="lazy" style="display: block; margin: 0 auto;">
+
+  <main class="contenido">
+    <p><strong>Misión:</strong> Ofrecer productos que generan alegría y placer a nuestros clientes brindando <br> una experiencia memorable</p>
+    <p><strong>Visión:</strong> Convertirnos en líderes del mercado local y futuros proveedores de dulcerías en la región</p>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script>
+    fetch("footer.html")
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById("footer-placeholder").innerHTML = data;
+      });
+  </script>
+</body>
+</html>

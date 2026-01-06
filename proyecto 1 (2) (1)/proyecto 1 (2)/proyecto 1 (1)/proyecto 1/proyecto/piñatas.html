@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Piñatas - Dulcería Estrella</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div id="header-placeholder"></div>
+
+  <script>
+    fetch("header.html")
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById("header-placeholder").innerHTML = data;
+      })
+      .catch(error => {
+        console.error("Error cargando header:", error);
+      });
+  </script>
+
+  <main class="contenido">
+    <h2>Piñatas para Fiestas</h2>
+
+    <div class="productos-contenedor">
+      <div class="producto">
+        <img src="img/piñatas2.png" alt="Piñatas tradicionales de 7 picos" width="200" height="200">
+        <h3>Piñatas Tradicionales</h3>
+        <p>$150.00 MXN</p>
+        <button class="add-to-cart" 
+                data-name="Piñatas Tradicionales" 
+                data-price="$150.00 MXN" 
+                data-img="img/piñatas2.png">
+          Agregar al carrito
+        </button>
+      </div>
+
+      <div class="producto">
+        <img src="img/snoopy.jpeg" alt="Piñatas de personajes" width="200" height="200">
+        <h3>Piñatas de Personajes</h3>
+        <p>$350.00 MXN</p>
+        <button class="add-to-cart" 
+                data-name="Piñatas de Personajes" 
+                data-price="$350.00 MXN" 
+                data-img="img/snoopy.jpeg">
+          Agregar al carrito
+        </button>
+      </div>
+
+      <div class="producto">
+        <img src="img/bely.jpeg" alt="Piñatas 2D" width="200" height="200">
+        <h3>Piñatas 2D</h3>
+        <p>$120.00 MXN</p>
+        <button class="add-to-cart" 
+                data-name="Piñatas 2D" 
+                data-price="$120.00 MXN" 
+                data-img="img/bely.jpeg">
+          Agregar al carrito
+        </button>
+      </div>
+
+      <div class="producto">
+        <img src="img/piñatas1.png" alt="Piñatas 3D" width="200" height="200">
+        <h3>Piñatas 3D</h3>
+        <p>$450.00 MXN</p>
+        <button class="add-to-cart" 
+                data-name="Piñatas 3D" 
+                data-price="$450.00 MXN" 
+                data-img="img/piñatas1.png">
+          Agregar al carrito
+        </button>
+      </div>
+    </div>
+  </main>
+  
+  <div id="footer-placeholder"></div>
+
+  <script>
+    fetch("footer.html")
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById("footer-placeholder").innerHTML = data;
+      })
+      .catch(error => {
+        console.error("Error cargando footer:", error);
+      });
+  </script>
+
+  <!-- IMPORTANTE: Ruta correcta del JS -->
+  <script src="carrito.js"></script>
+  
+  <script>
+    // Inicializar eventos del carrito
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log("Piñatas.html cargada");
+      
+      // Agregar eventos a los botones después de que la página cargue
+      setTimeout(function() {
+        const botones = document.querySelectorAll('.add-to-cart');
+        console.log(`Encontrados ${botones.length} botones de piñatas`);
+        
+        botones.forEach(button => {
+          button.addEventListener('click', function() {
+            const nombre = this.getAttribute('data-name');
+            const precio = this.getAttribute('data-price');
+            const imagen = this.getAttribute('data-img');
+            
+            console.log(`Click en piñata: ${nombre} - ${precio}`);
+            
+            if (typeof agregarAlCarrito === 'function') {
+              agregarAlCarrito(nombre, precio, imagen);
+            } else {
+              console.error("ERROR: La función agregarAlCarrito no existe");
+              alert("Error: El carrito no está disponible. Verifica que carrito.js esté cargado.");
+            }
+          });
+        });
+        
+        // Actualizar contador del carrito
+        if (typeof actualizarContadorCarrito === 'function') {
+          actualizarContadorCarrito();
+        }
+      }, 300);
+    });
+  </script>
+</body>
+</html>

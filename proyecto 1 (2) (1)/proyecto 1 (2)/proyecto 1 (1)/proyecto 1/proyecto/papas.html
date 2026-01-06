@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Botanas y Papas - Dulcería Estrella</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="img/Sabritas.png" type="image/png">
+</head>
+<body>
+
+  <div id="header-placeholder"></div>
+
+  <script>
+    fetch("header.html")
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById("header-placeholder").innerHTML = data;
+      })
+      .catch(error => {
+        console.error("Error cargando header:", error);
+      });
+  </script>
+
+  <main class="contenido">
+    <h2>Papas y Botanas</h2>
+
+    <div class="productos-contenedor">
+      <div class="producto">
+        <img src="img/papas1.png" alt="Papas Naturales" width="200" height="200">
+        <h3>Papas Naturales</h3>
+        <p>$10.00 MXN</p>
+        <button class="add-to-cart" 
+                data-name="Papas Naturales" 
+                data-price="$10.00 MXN" 
+                data-img="img/papas1.png">
+          Agregar al carrito
+        </button>
+      </div>
+
+      <div class="producto">
+        <img src="img/image.png" alt="Papas de queso" width="200" height="200">
+        <h3>Papas de queso</h3>
+        <p>$10.00 MXN</p>
+        <button class="add-to-cart" 
+                data-name="Papas de queso" 
+                data-price="$10.00 MXN" 
+                data-img="img/image.png">
+          Agregar al carrito
+        </button>
+      </div>
+
+      <div class="producto">
+        <img src="img/chipotle.png" alt="Papas de chipotle" width="200" height="200">
+        <h3>Papas de chipotle</h3>
+        <p>$10.00 MXN</p>
+        <button class="add-to-cart" 
+                data-name="Papas de chipotle" 
+                data-price="$10.00 MXN" 
+                data-img="img/chipotle.png">
+          Agregar al carrito
+        </button>
+      </div>
+
+      <div class="producto">
+        <img src="img/habanero.png" alt="Papas de habanero" width="200" height="200">
+        <h3>Papas de habanero</h3>
+        <p>$10.00 MXN</p>
+        <button class="add-to-cart" 
+                data-name="Papas de habanero" 
+                data-price="$10.00 MXN" 
+                data-img="img/habanero.png">
+          Agregar al carrito
+        </button>
+      </div>
+
+      <div class="producto">
+        <img src="img/papasl.png" alt="Papas con limón" width="200" height="200">
+        <h3>Papas con limón</h3>
+        <p>$10.00 MXN</p>
+        <button class="add-to-cart" 
+                data-name="Papas con limón" 
+                data-price="$10.00 MXN" 
+                data-img="img/papasl.png">
+          Agregar al carrito
+        </button>
+      </div>
+
+      <div class="producto">
+        <img src="img/totis.png" alt="Totis Hot Chili" width="200" height="200">
+        <h3>Totis Hot Chili</h3>
+        <p>$20.00 MXN</p>
+        <button class="add-to-cart" 
+                data-name="Totis Hot Chili" 
+                data-price="$20.00 MXN" 
+                data-img="img/totis.png">
+          Agregar al carrito
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script>
+    fetch("footer.html")
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById("footer-placeholder").innerHTML = data;
+      })
+      .catch(error => {
+        console.error("Error cargando footer:", error);
+      });
+  </script>
+
+  <!-- IMPORTANTE: Ruta correcta del JS -->
+  <script src="carrito.js"></script>
+  
+  <script>
+    // Inicializar eventos del carrito
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log("BotanasPapas.html cargada");
+      
+      // Agregar eventos a los botones después de que la página cargue
+      setTimeout(function() {
+        const botones = document.querySelectorAll('.add-to-cart');
+        console.log(`Encontrados ${botones.length} botones de papas/botanas`);
+        
+        botones.forEach(button => {
+          button.addEventListener('click', function() {
+            const nombre = this.getAttribute('data-name');
+            const precio = this.getAttribute('data-price');
+            const imagen = this.getAttribute('data-img');
+            
+            console.log(`Click en botana: ${nombre} - ${precio}`);
+            
+            if (typeof agregarAlCarrito === 'function') {
+              agregarAlCarrito(nombre, precio, imagen);
+            } else {
+              console.error("ERROR: La función agregarAlCarrito no existe");
+              alert("Error: El carrito no está disponible. Verifica que carrito.js esté cargado.");
+            }
+          });
+        });
+        
+        // Actualizar contador del carrito
+        if (typeof actualizarContadorCarrito === 'function') {
+          actualizarContadorCarrito();
+        }
+      }, 300);
+    });
+  </script>
+</body>
+</html>

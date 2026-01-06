@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dulcería Estrella</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="header-placeholder"></div>
+
+<script>
+  fetch("header.html")
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("header-placeholder").innerHTML = data;
+    });
+</script>
+
+<main class="contenido">
+  <h2>Productos</h2>
+
+  <div class="productos-contenedor">
+
+    <!-- PRODUCTO 1 -->
+    <div class="producto">
+      <img src="img/kranky.png.png" alt="Chocolate kranky" width="200" height="200">
+      <h3>Chocolate kranky</h3>
+      <p>$12.00 MXN</p>
+      <button class="add-to-cart" 
+        data-name="Chocolate kranky" 
+        data-price="12" 
+        data-img="img/kranky.png.png">
+  Agregar al carrito
+</button>
+    </div>
+
+    <!-- PRODUCTO 2 -->
+    <div class="producto">
+      <img src="img/mamut.png" alt="Chocolate mamut" width="200" height="200">
+      <h3>Chocolate mamut</h3>
+      <p>$10.00 MXN</p>
+      <button class="add-to-cart" 
+        data-name="Chocolate mamut" 
+        data-price="10" 
+        data-img="img/mamut.png">
+  Agregar al carrito
+</button>
+    </div>
+
+    <!-- PRODUCTO 3 -->
+    <div class="producto">
+      <img src="img/bocadin.png" alt="Chocolate bocadin" width="200" height="200">
+      <h3>Chocolate bocadin</h3>
+      <p>$08.00 MXN</p>
+      <button class="add-to-cart" 
+        data-name="Chocolate bocadin" 
+        data-price="8" 
+        data-img="img/bocadin.png">
+  Agregar al carrito
+</button>
+    </div>
+
+    <!-- PRODUCTO 4 -->
+    <div class="producto">
+      <img src="img/bubulubu.png" alt="Chocolate bubulubu" width="200" height="200">
+      <h3>Chocolate bubulubu</h3>
+      <p>$20.00 MXN</p>
+      <button class="add-to-cart" 
+        data-name="Chocolate bubulubu" 
+        data-price="20" 
+        data-img="img/bubulubu.png">
+  Agregar al carrito
+</button>
+    </div>
+
+    <!-- PRODUCTO 5 -->
+    <div class="producto">
+      <img src="img/crunch.png" alt="Chocolate crunch" width="200" height="200">
+      <h3>Chocolate crunch</h3>
+      <p>$20.00 MXN</p>
+      <button class="add-to-cart" 
+        data-name="Chocolate crunch" 
+        data-price="20" 
+        data-img="img/crunch.png">
+  Agregar al carrito
+</button>
+    </div>
+
+  </div>
+</main>
+
+<div id="footer-placeholder"></div>
+
+<script>
+  fetch("footer.html")
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("footer-placeholder").innerHTML = data;
+    });
+</script>
+
+<script src="carrito.js"></script>
+</body>
+</html>

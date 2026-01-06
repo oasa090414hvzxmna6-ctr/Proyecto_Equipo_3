@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras - Dulcería Estrella</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- IMPORTANTE: Debe cargar el header IGUAL que las otras páginas -->
+    <div id="header-placeholder"></div>
+
+    <main class="carrito-container">
+        <h1>Tu Carrito de Compras</h1>
+        
+        <!-- Carrito vacío -->
+        <div id="carrito-vacio" style="display: none;">
+            <h2>😢 Tu carrito está vacío</h2>
+            <p>No has agregado productos aún</p>
+            <a href="index.html" class="btn-volver">Volver a la tienda</a>
+        </div>
+
+        <!-- Sección cuando hay productos -->
+        <div id="carrito-lleno" style="display: none;">
+            <div id="contenido-carrito">
+                <!-- Los productos aparecerán aquí con JavaScript -->
+            </div>
+
+            <div class="resumen-compra">
+                <h3>Total: <span id="total-precio">$0.00</span></h3>
+                <button class="btn-comprar" id="btn-finalizar-compra">Finalizar Compra</button>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <!-- SCRIPTS PARA carrito.html -->
+    <script>
+        // 1. Cargar header dinámicamente (IGUAL que en fiestas.html)
+        fetch("header.html")
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("header-placeholder").innerHTML = data;
+                console.log("✅ Header cargado en carrito.html");
+            })
+            .catch(error => console.error("Error cargando header:", error));
+
+        fetch("footer.html")
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("footer-placeholder").innerHTML = data;
+                console.log("✅ Footer cargado en carrito.html");
+            })
+            .catch(error => console.error("Error cargando footer:", error));
+    </script>
+
+    <!-- 2. Incluir carrito.js PRIMERO (tiene la función finalizarCompra) -->
+    <script src="carrito.js"></script>
+    
+    <!-- 3. Incluir mostrarCarrito.js para mostrar los productos -->
+    <script src="mostrarCarrito.js"></script>
+
+    <!-- 4. Script adicional para conectar el botón de finalizar compra -->
+    <script>
+        // Esperar a que todo cargue
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("📄 carrito.html - DOM cargado");
+            
+            // Esperar un momento para que los scripts se carguen
+            setTimeout(function() {
+                console.log("🔍 Buscando botón de finalizar compra...");
+                
+                // Conectar el botón de finalizar compra
+                const btnFinalizar = document.getElementById('btn-finalizar-compra');
+                
+                if (btnFinalizar) {
+                    console.log("✅ Botón de finalizar compra encontrado");
+                    
+                    btnFinalizar.addEventListener('click', function() {
+                        console.log("🛒 Botón 'Finalizar Compra' clickeado");
+                        
+                        // Verificar si existe la función finalizarCompra
+                        if (typeof finalizarCompra === 'function') {
+                            console.log("✅ Llamando a función finalizarCompra()");
+                            finalizarCompra();
+                        } else {
+                            console.error("❌ ERROR: No se encontró la función finalizarCompra");
+                            alert("Error: No se puede procesar la compra. Recarga la página.");
+                        }
+                    });
+                } else {
+                    console.log("⚠️ No se encontró botón con id 'btn-finalizar-compra'");
+                    
+                    // Intentar buscar por clase
+                    const btnPorClase = document.querySelector('.btn-comprar');
+                    if (btnPorClase) {
+                        console.log("✅ Botón encontrado por clase");
+                        btnPorClase.id = 'btn-finalizar-compra';
+                        btnPorClase.addEventListener('click', function() {
+                            if (typeof finalizarCompra === 'function') {
+                                finalizarCompra();
+                            }
+                        });
+                    }
+                }
+            }, 1000); // Esperar 1 segundo
+        });
+    </script>
+
+</body>
+</html>
