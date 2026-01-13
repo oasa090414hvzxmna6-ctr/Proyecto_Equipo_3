@@ -8,6 +8,10 @@ function mostrarProductosEnCarrito() {
     console.log("🔄 Mostrando productos del carrito...");
     
     let carrito = JSON.parse(localStorage.getItem("carritoDulceria")) || [];
+    
+    
+    carrito = carrito.filter(p => p !== null && p !== undefined);
+    
     const contenedor = document.getElementById("contenido-carrito");
     const totalElemento = document.getElementById("total-precio");
     const carritoVacio = document.getElementById("carrito-vacio");
@@ -147,9 +151,19 @@ function agregarEventosAlCarrito() {
             recalcularTotalTemporal();
         });
         
-        // También actualizar al perder el foco
+        
+        input.addEventListener("change", function() {
+            const index = this.getAttribute("data-index");
+            const nuevaCantidad = parseInt(this.value) || 1;
+            
+            if (typeof window.actualizarCantidadProducto === 'function') {
+                window.actualizarCantidadProducto(index, nuevaCantidad);
+                recalcularTotal();
+            }
+        });
+        
         input.addEventListener("blur", function() {
-            primeraVez = true; // Resetear para la próxima vez
+            primeraVez = true; 
         });
     });
     
@@ -167,26 +181,22 @@ function agregarEventosAlCarrito() {
                 return;
             }
             
-            let carrito = JSON.parse(localStorage.getItem("carritoDulceria")) || [];
             
-            if (carrito[index]) {
-                const producto = carrito[index];
-                producto.cantidad = nuevaCantidad;
-                localStorage.setItem("carritoDulceria", JSON.stringify(carrito));
+            if (typeof window.actualizarCantidadProducto === 'function') {
+                const producto = window.actualizarCantidadProducto(index, nuevaCantidad);
                 
-                console.log(`✏️ ${producto.nombre} - Cantidad actualizada: ${nuevaCantidad}`);
-                
-                const precioNumerico = producto.precioNumerico || 0;
-                const nuevoSubtotal = precioNumerico * nuevaCantidad;
-                
-                const subtotalElement = document.getElementById(`subtotal-${index}`);
-                if (subtotalElement) {
-                    subtotalElement.innerHTML = `<strong>Subtotal: $${nuevoSubtotal.toFixed(2)} MXN</strong>`;
+                if (producto) {
+                    const precioNumerico = producto.precioNumerico || 0;
+                    const nuevoSubtotal = precioNumerico * nuevaCantidad;
+                    
+                    const subtotalElement = document.getElementById(`subtotal-${index}`);
+                    if (subtotalElement) {
+                        subtotalElement.innerHTML = `<strong>Subtotal: ${nuevoSubtotal.toFixed(2)} MXN</strong>`;
+                    }
+                    
+                    recalcularTotal();
+                    mostrarMensaje(`✅ ${producto.nombre} actualizado a ${nuevaCantidad} unidades`);
                 }
-                
-                recalcularTotal();
-                mostrarMensaje(`✅ ${producto.nombre} actualizado a ${nuevaCantidad} unidades`);
-                actualizarContadorEnHeader();
             }
         });
     });
@@ -205,24 +215,22 @@ function agregarEventosAlCarrito() {
                     return;
                 }
                 
-                let carrito = JSON.parse(localStorage.getItem("carritoDulceria")) || [];
                 
-                if (carrito[index]) {
-                    const producto = carrito[index];
-                    producto.cantidad = nuevaCantidad;
-                    localStorage.setItem("carritoDulceria", JSON.stringify(carrito));
+                if (typeof window.actualizarCantidadProducto === 'function') {
+                    const producto = window.actualizarCantidadProducto(index, nuevaCantidad);
                     
-                    const precioNumerico = producto.precioNumerico || 0;
-                    const nuevoSubtotal = precioNumerico * nuevaCantidad;
-                    
-                    const subtotalElement = document.getElementById(`subtotal-${index}`);
-                    if (subtotalElement) {
-                        subtotalElement.innerHTML = `<strong>Subtotal: $${nuevoSubtotal.toFixed(2)} MXN</strong>`;
+                    if (producto) {
+                        const precioNumerico = producto.precioNumerico || 0;
+                        const nuevoSubtotal = precioNumerico * nuevaCantidad;
+                        
+                        const subtotalElement = document.getElementById(`subtotal-${index}`);
+                        if (subtotalElement) {
+                            subtotalElement.innerHTML = `<strong>Subtotal: ${nuevoSubtotal.toFixed(2)} MXN</strong>`;
+                        }
+                        
+                        recalcularTotal();
+                        mostrarMensaje(`✅ ${producto.nombre} actualizado a ${nuevaCantidad} unidades`);
                     }
-                    
-                    recalcularTotal();
-                    mostrarMensaje(`✅ ${producto.nombre} actualizado a ${nuevaCantidad} unidades`);
-                    actualizarContadorEnHeader();
                 }
             }
         });
@@ -231,71 +239,36 @@ function agregarEventosAlCarrito() {
     // 4. BOTÓN ELIMINAR
     document.querySelectorAll(".btn-eliminar").forEach(boton => {
         boton.addEventListener("click", function() {
-            const index = this.getAttribute("data-index");
-            let carrito = JSON.parse(localStorage.getItem("carritoDulceria")) || [];
+            const index = parseInt(this.getAttribute("data-index"));
             
-            const nombreProducto = carrito[index]?.nombre;
+            let carritoTemp = JSON.parse(localStorage.getItem("carritoDulceria")) || [];
+            const nombreProducto = carritoTemp[index]?.nombre;
             
-            if (confirm(`¿Estás seguro de eliminar "${nombreProducto}" del carrito?`)) {
-                carrito.splice(index, 1);
-                localStorage.setItem("carritoDulceria", JSON.stringify(carrito));
-                
-                console.log(`🗑️ Eliminado: ${nombreProducto}`);
-                
+            
+            if (typeof window.eliminarProducto === 'function') {
+                window.eliminarProducto(index);
                 mostrarProductosEnCarrito();
                 mostrarMensaje(`🗑️ ${nombreProducto} eliminado del carrito`);
-                actualizarContadorEnHeader();
             }
         });
     });
     
-    // 5. BOTÓN COMPRAR
-    const btnComprar = document.querySelector(".btn-comprar");
-    if (btnComprar) {
-        btnComprar.addEventListener("click", function() {
-            let carrito = JSON.parse(localStorage.getItem("carritoDulceria")) || [];
-            
-            if (carrito.length === 0) {
-                alert("Tu carrito está vacío");
-                return;
-            }
-            
-            const total = calcularTotalCarrito();
-            
-            let resumen = "📋 RESUMEN DE COMPRA:\n\n";
-            carrito.forEach((producto, index) => {
-                const subtotal = (producto.precioNumerico || 0) * (producto.cantidad || 1);
-                resumen += `${producto.cantidad}x ${producto.nombre} - $${subtotal.toFixed(2)} MXN\n`;
-            });
-            resumen += `\n💰 TOTAL: $${total.toFixed(2)} MXN\n\n`;
-            resumen += "¿Confirmar compra?";
-            
-            if (confirm(resumen)) {
-                alert(`✅ ¡Compra realizada!\n\nTotal: $${total.toFixed(2)} MXN\n\nGracias por tu compra en Dulcería Estrella.\nTe esperamos pronto.`);
-                
-                localStorage.setItem("carritoDulceria", JSON.stringify([]));
-                mostrarProductosEnCarrito();
-                actualizarContadorEnHeader();
-            }
-        });
-    }
 }
 
 // FUNCIONES AUXILIARES
 function recalcularTotal() {
-    let carrito = JSON.parse(localStorage.getItem("carritoDulceria")) || [];
     let totalCompra = 0;
-    
-    carrito.forEach((producto, index) => {
-        const precioNumerico = producto.precioNumerico || 0;
-        const cantidad = producto.cantidad || 1;
-        totalCompra += precioNumerico * cantidad;
-    });
+    if (typeof window.obtenerTotal === 'function') {
+        totalCompra = window.obtenerTotal();
+    } else {
+        let carrito = JSON.parse(localStorage.getItem("carritoDulceria")) || [];
+        carrito.forEach(p => totalCompra += (p.precioNumerico || 0) * (p.cantidad || 1));
+    }
     
     const totalElemento = document.getElementById("total-precio");
     if (totalElemento) {
-        totalElemento.textContent = `$${totalCompra.toFixed(2)}`;
-        console.log(`💰 Total actualizado: $${totalCompra.toFixed(2)}`);
+        totalElemento.textContent = `${totalCompra.toFixed(2)}`;
+        console.log(`💰 Total actualizado: ${totalCompra.toFixed(2)}`);
     }
 }
 
@@ -314,14 +287,6 @@ function recalcularTotalTemporal() {
     if (totalElemento) {
         totalElemento.textContent = `$${totalTemp.toFixed(2)}`;
     }
-}
-
-function calcularTotalCarrito() {
-    let carrito = JSON.parse(localStorage.getItem("carritoDulceria")) || [];
-    return carrito.reduce((sum, producto) => {
-        const precio = producto.precioNumerico || 0;
-        return sum + (precio * (producto.cantidad || 1));
-    }, 0);
 }
 
 function mostrarMensaje(texto) {
@@ -358,16 +323,9 @@ function mostrarMensaje(texto) {
     }, 2000);
 }
 
-function actualizarContadorEnHeader() {
-    let carrito = JSON.parse(localStorage.getItem("carritoDulceria")) || [];
-    const total = carrito.reduce((sum, p) => sum + (p.cantidad || 1), 0);
-    
-    const contador = document.getElementById("cart-count");
-    if (contador) {
-        contador.textContent = total;
-        console.log(`🔢 Contador actualizado: ${total}`);
-    }
-}
+
+window.mostrarMensaje = mostrarMensaje;
+
 
 // INICIALIZAR
 document.addEventListener("DOMContentLoaded", function() {

@@ -85,30 +85,233 @@ function agregarAlCarrito(nombre, precio, imagen = 'img/default.jpg') {
 function finalizarCompra() {
     console.log("💰 FINALIZANDO COMPRA...");
     
+    
+    carrito = JSON.parse(localStorage.getItem("carritoDulceria")) || [];
+    
     if (carrito.length === 0) {
-        alert("Tu carrito está vacío");
+        mostrarMensaje("Tu carrito está vacío");
         return false;
     }
+
     
-    // Calcular total
-    const totalProductos = carrito.reduce((total, producto) => {
-        return total + (producto.cantidad || 1);
-    }, 0);
+    metodoSeleccionado = '';
     
+    
+    const btnTarjeta = document.getElementById('metodo-tarjeta');
+    const btnEfectivo = document.getElementById('metodo-efectivo');
+    const formTarjeta = document.getElementById('form-tarjeta');
+    const infoEfectivo = document.getElementById('info-efectivo');
+    
+    if(btnTarjeta) btnTarjeta.classList.remove('seleccionado');
+    if(btnEfectivo) btnEfectivo.classList.remove('seleccionado');
+    if(formTarjeta) formTarjeta.classList.remove('visible');
+    if(infoEfectivo) infoEfectivo.classList.remove('visible');
+
+    
+    if (!document.getElementById('modal-pago-overlay')) {
+        crearModalPago();
+    }
+
     const totalPrecio = carrito.reduce((total, producto) => {
         return total + (producto.precioNumerico * (producto.cantidad || 1));
     }, 0);
+
+    const btnPagar = document.getElementById('btn-confirmar-pago');
+    if(btnPagar) {
+        btnPagar.textContent = `Pagar $${totalPrecio.toFixed(2)} MXN`;
+        btnPagar.disabled = false;
+    }
+
+    const overlay = document.getElementById('modal-pago-overlay');
+    overlay.classList.add('active'); 
+    overlay.style.visibility = "visible"; 
+    overlay.style.opacity = "1";
     
-    // Mostrar resumen de compra
-    let resumen = "📋 RESUMEN DE COMPRA:\n\n";
-    carrito.forEach((producto, index) => {
-        const subtotal = producto.precioNumerico * (producto.cantidad || 1);
-        resumen += `${producto.cantidad}x ${producto.nombre} - $${subtotal.toFixed(2)} MXN\n`;
-    });
-    resumen += `\n💰 TOTAL: $${totalPrecio.toFixed(2)} MXN\n\n`;
-    resumen += "¿Confirmar compra?";
+    return true;
+}
+
+function crearModalPago() {
+    const modalHTML = `
+    <div id="modal-pago-overlay" class="modal-overlay">
+        <div class="modal-pago">
+            <button class="btn-cerrar-modal" onclick="cerrarModalPago()">&times;</button>
+            <h2 class="modal-titulo">Elige tu método de pago</h2>
+            
+            <div class="opciones-pago">
+                <div class="btn-metodo" onclick="seleccionarMetodo('tarjeta')" id="metodo-tarjeta">
+                    <span style="font-size: 30px;">💳</span>
+                    <span>Tarjeta</span>
+                </div>
+                <div class="btn-metodo" onclick="seleccionarMetodo('efectivo')" id="metodo-efectivo">
+                    <span style="font-size: 30px;">💵</span>
+                    <span>Efectivo</span>
+                </div>
+            </div>
+
+            
+            <div id="form-tarjeta" class="form-pago">
+                <div class="campo-pago">
+                    <label>Nombre en la tarjeta</label>
+                    <input type="text" placeholder="Como aparece en la tarjeta">
+                </div>
+                <div class="campo-pago">
+                    <label>Número de tarjeta</label>
+                    <input type="text" placeholder="0000 0000 0000 0000" maxlength="19">
+                </div>
+                <div class="fila-doble">
+                    <div class="campo-pago">
+                        <label>Vencimiento</label>
+                        <input type="text" id="caducidad-tarjeta" placeholder="MM/AA" maxlength="5">
+                    </div>
+                    <div class="campo-pago">
+                        <label>CVV</label>
+                        <input type="text" placeholder="123" maxlength="3">
+                    </div>
+                </div>
+            </div>
+
+            
+            <div id="info-efectivo" class="form-pago" style="text-align: center;">
+                <p style="font-size: 1.2rem; margin-bottom: 10px;">Pago contra entrega</p>
+                <p style="color: #666;">Pagarás al recibir tus dulces.</p>
+                
+                <div class="campo-pago" style="max-width: 200px; margin: 15px auto; text-align: left;">
+                    <label>¿Con cuánto pagarás?</label>
+                    <input type="number" id="monto-efectivo" placeholder="Ej: $500" min="0">
+                </div>
+            </div>
+
+            <button id="btn-confirmar-pago" class="btn-confirmar-pago" onclick="procesarPago()">Pagar</button>
+        </div>
+    </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
     
-    if (confirm(resumen)) {
+    const cadInput = document.getElementById('caducidad-tarjeta');
+    if (cadInput) {
+        cadInput.addEventListener('input', function(e) {
+            let v = e.target.value.replace(/\D/g, '');
+            if (v.length >= 1) {
+                let m = v.slice(0, 2);
+                if (m.length === 2) {
+                    let mi = parseInt(m, 10);
+                    if (mi <= 0) m = '01';
+                    else if (mi > 12) m = '12';
+                    let y = v.slice(2, 4);
+                    v = m + (v.length > 2 ? '/' + y : '/');
+                } else {
+                    v = m;
+                }
+            }
+            e.target.value = v.slice(0, 5);
+        });
+    }
+}
+
+function cerrarModalPago() {
+    const overlay = document.getElementById('modal-pago-overlay');
+    if (overlay) {
+        overlay.classList.remove('active');
+        overlay.style.visibility = "hidden";
+        overlay.style.opacity = "0";
+    }
+}
+
+let metodoSeleccionado = '';
+
+function seleccionarMetodo(metodo) {
+    metodoSeleccionado = metodo;
+    
+    const btnTarjeta = document.getElementById('metodo-tarjeta');
+    const btnEfectivo = document.getElementById('metodo-efectivo');
+    
+    if(btnTarjeta) btnTarjeta.classList.remove('seleccionado');
+    if(btnEfectivo) btnEfectivo.classList.remove('seleccionado');
+    
+    const seleccionado = document.getElementById(`metodo-${metodo}`);
+    if(seleccionado) seleccionado.classList.add('seleccionado');
+
+    const formTarjeta = document.getElementById('form-tarjeta');
+    const infoEfectivo = document.getElementById('info-efectivo');
+
+    if(formTarjeta) formTarjeta.classList.remove('visible');
+    if(infoEfectivo) infoEfectivo.classList.remove('visible');
+
+    if (metodo === 'tarjeta') {
+        if(formTarjeta) formTarjeta.classList.add('visible');
+    } else {
+        if(infoEfectivo) infoEfectivo.classList.add('visible');
+        const montoInput = document.getElementById('monto-efectivo');
+        const btnPagar = document.getElementById('btn-confirmar-pago');
+        if (montoInput && btnPagar) {
+            const total = typeof obtenerTotal === 'function' ? obtenerTotal() : carrito.reduce((t, p) => t + (p.precioNumerico * (p.cantidad || 1)), 0);
+            montoInput.focus();
+            btnPagar.disabled = (parseFloat(montoInput.value) || 0) < total;
+            const actualizarEstado = () => {
+                const monto = parseFloat(montoInput.value) || 0;
+                btnPagar.disabled = monto < total;
+            };
+            montoInput.removeEventListener('input', actualizarEstado);
+            montoInput.addEventListener('input', actualizarEstado);
+        }
+    }
+}
+
+function procesarPago() {
+    if (!metodoSeleccionado) {
+        alert("Por favor selecciona un método de pago (Tarjeta o Efectivo)");
+        return;
+    }
+
+    if (metodoSeleccionado === 'tarjeta') {
+        const inputs = document.querySelectorAll('#form-tarjeta input');
+        let completo = true;
+        inputs.forEach(input => {
+            if (!input.value.trim()) completo = false;
+        });
+
+        if (!completo) {
+            alert("Por favor completa todos los datos de la tarjeta para continuar.");
+            return;
+        }
+    }
+
+    
+    let mensajeExtra = "";
+    if (metodoSeleccionado === 'efectivo') {
+        const montoInput = document.getElementById('monto-efectivo');
+        const monto = parseFloat(montoInput.value) || 0;
+        
+        const totalPrecio = carrito.reduce((total, producto) => {
+            return total + (producto.precioNumerico * (producto.cantidad || 1));
+        }, 0);
+
+        if (monto < totalPrecio) {
+            alert(`El monto a pagar ($${monto}) es menor al total ($${totalPrecio}). Por favor ingresa una cantidad válida.`);
+            return;
+        }
+        
+        const cambio = monto - totalPrecio;
+        mensajeExtra = `\n\nPagas con: $${monto.toFixed(2)}\nCambio: $${cambio.toFixed(2)}`;
+    }
+
+    const btn = document.getElementById('btn-confirmar-pago');
+    const textoOriginal = btn.textContent;
+    btn.textContent = "Procesando...";
+    btn.disabled = true;
+
+    console.log(`💳 Procesando pago con método: ${metodoSeleccionado}`);
+
+    setTimeout(() => {
+        const totalPrecio = carrito.reduce((total, producto) => {
+            return total + (producto.precioNumerico * (producto.cantidad || 1));
+        }, 0);
+
+        cerrarModalPago();
+
+        alert(`¡PAGO EXITOSO!\n\nTotal pagado: $${totalPrecio.toFixed(2)} MXN\nMetodo: ${metodoSeleccionado.toUpperCase()}${mensajeExtra}\n\nGracias por tu compra en Dulcería Estrella.\nTe esperamos pronto.`);
+        
         // Vaciar carrito
         carrito = [];
         localStorage.setItem("carritoDulceria", JSON.stringify([]));
@@ -116,15 +319,10 @@ function finalizarCompra() {
         // Actualizar contador a 0
         actualizarContador();
         
-        // Mostrar mensaje de éxito
-        alert(`✅ ¡COMPRA REALIZADA CON ÉXITO!\n\nTotal pagado: $${totalPrecio.toFixed(2)} MXN\n\nGracias por tu compra en Dulcería Estrella.\nTe esperamos pronto.`);
         
-        console.log("✅ Compra finalizada - Carrito vaciado");
-        return true;
-    } else {
-        console.log("❌ Compra cancelada por el usuario");
-        return false;
-    }
+        window.location.href = "index.html"; 
+        
+    }, 2000);
 }
 
 // ========== 5. FUNCIÓN PARA VACIAR CARRITO ==========
@@ -262,6 +460,61 @@ window.agregarAlCarrito = agregarAlCarrito;
 window.actualizarContador = actualizarContador;
 window.finalizarCompra = finalizarCompra;
 window.vaciarCarrito = vaciarCarrito;
+
+
+window.eliminarProducto = function(index) {
+    carrito = JSON.parse(localStorage.getItem("carritoDulceria")) || [];
+    
+    if (index >= 0 && index < carrito.length) {
+        const producto = carrito[index];
+        carrito.splice(index, 1);
+        localStorage.setItem("carritoDulceria", JSON.stringify(carrito));
+        actualizarContador(); 
+        
+        
+        const btnPagar = document.getElementById('btn-confirmar-pago');
+        if (btnPagar) {
+            const totalPrecio = carrito.reduce((total, p) => {
+                return total + (p.precioNumerico * (p.cantidad || 1));
+            }, 0);
+            btnPagar.textContent = `Pagar $${totalPrecio.toFixed(2)} MXN`;
+        }
+        
+        console.log(`🗑️ Eliminado desde carrito.js: ${producto.nombre}`);
+        return producto;
+    }
+    return null;
+};
+
+window.actualizarCantidadProducto = function(index, nuevaCantidad) {
+    carrito = JSON.parse(localStorage.getItem("carritoDulceria")) || [];
+
+    if (index >= 0 && index < carrito.length && nuevaCantidad > 0) {
+        carrito[index].cantidad = nuevaCantidad;
+        localStorage.setItem("carritoDulceria", JSON.stringify(carrito));
+        actualizarContador(); 
+        
+        
+        const btnPagar = document.getElementById('btn-confirmar-pago');
+        if (btnPagar) {
+            const totalPrecio = carrito.reduce((total, p) => {
+                return total + (p.precioNumerico * (p.cantidad || 1));
+            }, 0);
+            btnPagar.textContent = `Pagar $${totalPrecio.toFixed(2)} MXN`;
+        }
+
+        console.log(`✏️ Actualizado desde carrito.js: ${carrito[index].nombre} -> ${nuevaCantidad}`);
+        return carrito[index];
+    }
+    return null;
+};
+
+window.obtenerTotal = function() {
+    carrito = JSON.parse(localStorage.getItem("carritoDulceria")) || [];
+    return carrito.reduce((total, producto) => {
+        return total + (producto.precioNumerico * (producto.cantidad || 1));
+    }, 0);
+};
 
 // Función para ver carrito en consola
 window.verCarrito = function() {

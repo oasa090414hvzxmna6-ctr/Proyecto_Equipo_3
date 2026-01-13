@@ -68,11 +68,11 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log("📄 carrito.html - DOM cargado");
             
-            // Esperar un momento para que los scripts se carguen
+            
             setTimeout(function() {
                 console.log("🔍 Buscando botón de finalizar compra...");
                 
-                // Conectar el botón de finalizar compra
+                
                 const btnFinalizar = document.getElementById('btn-finalizar-compra');
                 
                 if (btnFinalizar) {
@@ -81,7 +81,7 @@
                     btnFinalizar.addEventListener('click', function() {
                         console.log("🛒 Botón 'Finalizar Compra' clickeado");
                         
-                        // Verificar si existe la función finalizarCompra
+                        
                         if (typeof finalizarCompra === 'function') {
                             console.log("✅ Llamando a función finalizarCompra()");
                             finalizarCompra();
